@@ -4,7 +4,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -37,8 +41,10 @@ public class ScurityConfig {
                 );
 
         //auth.disable() 테스트 할때는 이렇게 막아둔다
-        http
-                .csrf((auth)->auth.disable());
+        //이걸 disable 을 안걸경우는
+        //<input type="hidden" name="_csrf" value="{{_csrf.token}}"/>이렇게 넣어준다
+//        http
+//                .csrf((auth)->auth.disable());
 
 
 
@@ -64,4 +70,30 @@ public class ScurityConfig {
 
         return http.build(); //HttpSecurity http를 받아서 빌드 해준다
     }
+
+    //InMemory 방식 유저 저장
+    /*토이 프로젝트를 진행하는 경우 또는 시큐리티 로그인 환경이 필요하지만
+    소수의 회원 정보만 가지며 데이터베이스라는 자원을 투자하기
+    힘든 경우는 회원가입 없는 InMemory 방식으로 유저를 저장하면 된다.
+     이 경우 InMemoryUserDetailsManager 클래스를 통해 유저를
+     등록하면 된다.*/
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+
+        UserDetails user1 = User.builder()
+                .username("user1")
+                .password(bCryptPasswordEncoder().encode("1234"))
+                .roles("ADMIN")
+                .build();
+
+        UserDetails user2 = User.builder()
+                .username("user2")
+                .password(bCryptPasswordEncoder().encode("1234"))
+                .roles("USER")
+                .build();
+
+        return new InMemoryUserDetailsManager(user1, user2);
+    }
+
 }
