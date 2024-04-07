@@ -41,6 +41,27 @@ public class ScurityConfig {
                 .csrf((auth)->auth.disable());
 
 
+
+        //동일한 아이디로 다중 로그인을 진행할 경우에 대한 설정 방법은 세션 통제를 통해
+        /*sessionManagement() 메소드를 통한 설정을 진행한다.
+        maximumSession(정수) : 하나의 아이디에 대한 다중 로그인 허용 개수
+        maxSessionPreventsLogin(불린) : 다중 로그인 개수를 초과하였을 경우 처리 방법
+            - true : 초과시 새로운 로그인 차단
+            - false : 초과시 기존 세션 하나 삭제*/
+        http
+                .sessionManagement((auth) -> auth
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(true));
+
+
+        /*세션 고정 공격을 보호하기 위한 로그인 성공시 세션 설정 방법은 sessionManagement() 메소드의 sessionFixation() 메소드를 통해서 설정할 수 있다.
+        - sessionManagement().sessionFixation().none() : 로그인 시 세션 정보 변경 안함
+        - sessionManagement().sessionFixation().newSession() : 로그인 시 세션 새로 생성
+        - sessionManagement().sessionFixation().changeSessionId() : 로그인 시 동일한 세션에 대한 id 변경*/
+        http
+                .sessionManagement((auth) -> auth
+                        .sessionFixation().changeSessionId()); //주로 이방식으로 구현한다
+
         return http.build(); //HttpSecurity http를 받아서 빌드 해준다
     }
 }

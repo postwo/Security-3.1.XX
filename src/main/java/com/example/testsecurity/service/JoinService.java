@@ -31,7 +31,7 @@ public class JoinService {
 
         data.setUsername(user.getUsername()); // dto정보를 entity로변형
         data.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        data.setRole("ROLE_USER");
+        data.setRole("ROLE_ADMIN");
 
         userRepository.save(data); // 엔티티변형한거를 save한다
     }
