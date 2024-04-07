@@ -16,6 +16,7 @@ public class ScurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    //회원가입 부터 보기
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http)throws Exception{
